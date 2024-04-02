@@ -50,6 +50,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    'web.middleware.auth.AuthMiddleWare',
 ]
 
 ROOT_URLCONF = "crm实战.urls"
@@ -125,6 +127,13 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# 用户权限相关
+PERMISSION_SESSION_KEY='permissions'
+WHITE_URLS=[
+    '/admin/',
+    '/login/',
+]
 
 #import local settings
 try:

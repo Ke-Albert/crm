@@ -1,9 +1,10 @@
 import os
 import mimetypes
-from django.shortcuts import render, redirect
-from django.http import FileResponse
+
 from django.conf import settings
-import xlrd
+from django.http import FileResponse
+from django.shortcuts import render, redirect
+from openpyxl.reader.excel import load_workbook
 
 from web import models
 from web.forms.customer import CustomerForm
@@ -78,25 +79,15 @@ def customer_import(request):
         打开上传的Excel文件，并读取内容
         注：打开本地文件时，可以使用：workbook = xlrd.open_workbook(filename='本地文件路径.xlsx')
         """
-        workbook = xlrd.open_workbook(file_contents=customer_excel.file.read())
+        wb=load_workbook(customer_excel)
+        sheet=wb.worksheets[0]
 
-        # sheet = workbook.sheet_by_name('工作表1')
-        sheet = workbook.sheet_by_index(0)
-        row_map = {
-            0: {'text': '客户姓名', 'name': 'name'},
-            1: {'text': '年龄', 'name': 'age'},
-            2: {'text': '邮箱', 'name': 'email'},
-            3: {'text': '公司', 'name': 'company'},
-        }
-        object_list = []
-        for row_num in range(1, sheet.nrows):
-            row = sheet.row(row_num)
-            row_dict = {}
-            for col_num, name_text in row_map.items():
-                row_dict[name_text['name']] = row[col_num].value
-            object_list.append(models.Customer(**row_dict))
-
-        models.Customer.objects.bulk_create(object_list, batch_size=20)
+        for row in sheet.iter_rows(min_row=2):
+            name=row[0].value,
+            age=row[1].value,
+            email=row[2].value,
+            company=row[3].value,
+            models.Customer.objects.create(name=name,age=age,email=email,company=company)
     except Exception as e:
         context['status'] = False
         context['msg'] = '导入失败'

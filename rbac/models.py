@@ -15,7 +15,7 @@ class UserInfo(models.Model):
 class Permission(models.Model):
     """权限表"""
     title=models.CharField(verbose_name='title',max_length=32)
-    url=models.URLField(verbose_name='reg url',max_length=128)
+    url=models.CharField(verbose_name='reg url',max_length=128)
 
     def __str__(self):
         return self.title

@@ -17,6 +17,8 @@ class Permission(models.Model):
     title=models.CharField(verbose_name='title',max_length=32)
     url=models.CharField(verbose_name='reg url',max_length=128)
 
+    is_menu=models.BooleanField(verbose_name='是否可做菜单',default=False)
+    icon=models.CharField(max_length=32,null=True,blank=True)
     def __str__(self):
         return self.title
 

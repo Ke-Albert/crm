@@ -28,9 +28,21 @@ def login(req):
         #     if item['permissions__url'] not in permissions:
         #         permissions.append(item['permissions__url'])
 
-        permissions=user.roles.all().filter(permissions__url__isnull=False).values('permissions__url').distinct()
+        permissions_queryset=user.roles.all().\
+            filter(permissions__url__isnull=False).\
+            values('permissions__url',
+                   'permissions__title',
+                   'permissions__is_menu',
+                   'permissions__icon').distinct()
         req.session['info'] = {'id': user.id, 'name': user.name}
-        req.session[settings.PERMISSION_SESSION_KEY]=list(permissions)
+        menu_list=[]
+        permission_list=[]
+        for row in permissions_queryset:
+            permission_list.append({'permissions__url':row['permissions__url']})
+            if row['permissions__is_menu']:
+                menu_list.append({'title':row['permissions__title'],'icon':row['permissions__icon'],'url':row['permissions__url']})
+        req.session[settings.PERMISSION_SESSION_KEY]=permission_list
+        req.session[settings.MENU_SESSION_KEY]=menu_list
         req.session.set_expiry(60 * 60 * 24 * 7)
         return redirect('/customer/list/')
     return render(req, 'login.html', {'form': form})

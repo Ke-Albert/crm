@@ -130,6 +130,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # 用户权限相关
 PERMISSION_SESSION_KEY='permissions'
+MENU_SESSION_KEY='menu_list'
 WHITE_URLS=[
     '/admin/',
     '/login/',

@@ -12,13 +12,18 @@ class UserInfo(models.Model):
     def __str__(self):
         return self.name
 
+class Menu(models.Model):
+    """一级菜单表"""
+    title=models.CharField(verbose_name='title',max_length=32,unique=True)
+    icon=models.CharField(max_length=32,null=True,blank=True)
+
+    def __str__(self):
+        return self.title
 class Permission(models.Model):
     """权限表"""
     title=models.CharField(verbose_name='title',max_length=32)
     url=models.CharField(verbose_name='reg url',max_length=128)
-
-    is_menu=models.BooleanField(verbose_name='是否可做菜单',default=False)
-    icon=models.CharField(max_length=32,null=True,blank=True)
+    menu=models.ForeignKey(verbose_name='menu',to='Menu',null=True,blank=True,on_delete=models.RESTRICT)
     def __str__(self):
         return self.title
 

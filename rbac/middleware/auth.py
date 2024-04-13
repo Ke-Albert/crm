@@ -24,10 +24,16 @@ class AuthMiddleWare(MiddlewareMixin):
         # 3.权限校验
         flag=False
         for permission in permission_list:
+            id=permission.get('id')
+            pid=permission.get('pid')
             reg="^%s$" % permission.get('permissions__url')
-            print(reg,current_url)
+            # print(reg,current_url)
             if re.match(reg,current_url):
                 flag=True
+                if pid:
+                    req.current_id=pid
+                else:
+                    req.current_id=id
                 break
         if not flag:
             return HttpResponse('无权访问')

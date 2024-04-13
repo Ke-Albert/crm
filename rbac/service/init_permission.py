@@ -21,6 +21,8 @@ def init_permission(req,user):
     permissions_queryset=user.roles.all().\
         filter(permissions__url__isnull=False).\
         values('permissions__url',
+               'permissions__id',
+               'permissions__parent__id',
                'permissions__title',
                'permissions__menu__id',
                'permissions__menu__title',
@@ -29,7 +31,7 @@ def init_permission(req,user):
     menu_dict={}#菜单+能成为菜单的权限
     permission_list=[]#所有的权限信息
     for row in permissions_queryset:
-        permission_list.append({'permissions__url':row['permissions__url']})
+        permission_list.append({'id':row['permissions__id'],'pid':row['permissions__parent__id'],'permissions__url':row['permissions__url']})
         menu_id=row['permissions__menu__id']
         if not menu_id:
             continue
@@ -46,11 +48,13 @@ def init_permission(req,user):
             menu_dict[menu_id]={
                 'title':row['permissions__menu__title'],
                 'icon': row['permissions__menu__icon'],
-                'children':[{'title':row['permissions__title'],'url':row['permissions__url']}]
+                'children':[{'id':row['permissions__id'],'title':row['permissions__title'],'url':row['permissions__url']}]
             }
         else:
-            menu_dict[menu_id]['children'].append({'title':row['permissions__title'],'url':row['permissions__url']})
+            menu_dict[menu_id]['children'].append({'id':row['permissions__id'],'title':row['permissions__title'],'url':row['permissions__url']})
     req.session[settings.PERMISSION_SESSION_KEY]=permission_list
     req.session[settings.MENU_SESSION_KEY]=menu_dict
+    print(permission_list)
+    print(menu_dict)
 
     req.session.set_expiry(60 * 60 * 24 * 7)

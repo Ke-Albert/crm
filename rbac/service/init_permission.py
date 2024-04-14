@@ -29,9 +29,13 @@ def init_permission(req,user):
                'permissions__menu__icon').distinct()
     req.session['info'] = {'id': user.id, 'name': user.name}
     menu_dict={}#菜单+能成为菜单的权限
-    permission_list=[]#所有的权限信息
+    permission_dict={}#所有的权限信息
     for row in permissions_queryset:
-        permission_list.append({'id':row['permissions__id'],'pid':row['permissions__parent__id'],'permissions__url':row['permissions__url']})
+        permission_dict[row['permissions__id']]={'id':row['permissions__id'],
+                                                 'pid':row['permissions__parent__id'],
+                                                 'permissions__url':row['permissions__url'],
+                                                 'title':row['permissions__title'],
+                                                 }
         menu_id=row['permissions__menu__id']
         if not menu_id:
             continue
@@ -52,9 +56,9 @@ def init_permission(req,user):
             }
         else:
             menu_dict[menu_id]['children'].append({'id':row['permissions__id'],'title':row['permissions__title'],'url':row['permissions__url']})
-    req.session[settings.PERMISSION_SESSION_KEY]=permission_list
+    req.session[settings.PERMISSION_SESSION_KEY]=permission_dict
     req.session[settings.MENU_SESSION_KEY]=menu_dict
-    print(permission_list)
-    print(menu_dict)
+    # print(permission_dict)
+    # print(menu_dict)
 
     req.session.set_expiry(60 * 60 * 24 * 7)

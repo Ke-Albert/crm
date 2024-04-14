@@ -32,3 +32,7 @@ def multi_menu(request):
                 row['class'] = 'active'
                 ordered_dict[key]['class'] = ''
     return {'menu_dict': ordered_dict}
+
+@register.inclusion_tag('rbac/breadcrumb.html')
+def breadcrumb(request):
+    return {'breadcrumb_list':request.breadcrumb_list}

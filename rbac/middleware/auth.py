@@ -17,13 +17,17 @@ class AuthMiddleWare(MiddlewareMixin):
                 return
 
         # 2.获取当前用户session中的权限
-        permission_list=req.session.get(settings.PERMISSION_SESSION_KEY)
-        if not permission_list:
+        permission_dict=req.session.get(settings.PERMISSION_SESSION_KEY)
+        if not permission_dict:
             return redirect('/login/')
+
+        req.breadcrumb_list=[
+            {'title':'首页','url':'/'},
+        ]
 
         # 3.权限校验
         flag=False
-        for permission in permission_list:
+        for permission in permission_dict.values():
             id=permission.get('id')
             pid=permission.get('pid')
             reg="^%s$" % permission.get('permissions__url')
@@ -32,8 +36,13 @@ class AuthMiddleWare(MiddlewareMixin):
                 flag=True
                 if pid:
                     req.current_id=pid
+                    req.breadcrumb_list.extend([
+                        {'title':permission_dict[str(pid)]['title'],'url':permission_dict[str(pid)]['permissions__url']},
+                        {'title': permission['title'], 'url': permission['permissions__url']},
+                    ])
                 else:
                     req.current_id=id
+                    req.breadcrumb_list.extend([{'title': permission['title'], 'url': permission['permissions__url']}])
                 break
         if not flag:
             return HttpResponse('无权访问')

@@ -30,6 +30,7 @@ class AuthMiddleWare(MiddlewareMixin):
         for permission in permission_dict.values():
             id=permission.get('id')
             pid=permission.get('pid')
+            palias=permission.get('palias')
             reg="^%s$" % permission.get('permissions__url')
             # print(reg,current_url)
             if re.match(reg,current_url):
@@ -37,7 +38,7 @@ class AuthMiddleWare(MiddlewareMixin):
                 if pid:
                     req.current_id=pid
                     req.breadcrumb_list.extend([
-                        {'title':permission_dict[str(pid)]['title'],'url':permission_dict[str(pid)]['permissions__url']},
+                        {'title':permission_dict[palias]['title'],'url':permission_dict[palias]['permissions__url']},
                         {'title': permission['title'], 'url': permission['permissions__url']},
                     ])
                 else:

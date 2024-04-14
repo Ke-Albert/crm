@@ -29,6 +29,7 @@ class Permission(models.Model):
     parent = models.ForeignKey(verbose_name='parent permission', to='Permission', null=True, blank=True,
                                on_delete=models.RESTRICT)
     menu = models.ForeignKey(verbose_name='menu', to='Menu', null=True, blank=True, on_delete=models.RESTRICT)
+    alias=models.CharField(verbose_name='url alias',max_length=32,unique=True,null=True,blank=True)
 
     def __str__(self):
         return self.title

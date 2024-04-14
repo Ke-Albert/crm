@@ -36,3 +36,9 @@ def multi_menu(request):
 @register.inclusion_tag('rbac/breadcrumb.html')
 def breadcrumb(request):
     return {'breadcrumb_list':request.breadcrumb_list}
+
+@register.filter
+def has_permission(request,current_alias):
+    if current_alias in request.session[settings.PERMISSION_SESSION_KEY]:
+        return True
+    return False

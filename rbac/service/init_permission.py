@@ -22,8 +22,10 @@ def init_permission(req,user):
         filter(permissions__url__isnull=False).\
         values('permissions__url',
                'permissions__id',
-               'permissions__parent__id',
+               'permissions__alias',
+               'permissions__parent__alias',
                'permissions__title',
+               'permissions__parent__id',
                'permissions__menu__id',
                'permissions__menu__title',
                'permissions__menu__icon').distinct()
@@ -31,10 +33,11 @@ def init_permission(req,user):
     menu_dict={}#菜单+能成为菜单的权限
     permission_dict={}#所有的权限信息
     for row in permissions_queryset:
-        permission_dict[row['permissions__id']]={'id':row['permissions__id'],
+        permission_dict[row['permissions__alias']]={'id':row['permissions__id'],
                                                  'pid':row['permissions__parent__id'],
                                                  'permissions__url':row['permissions__url'],
                                                  'title':row['permissions__title'],
+                                                'palias':row['permissions__parent__alias'],
                                                  }
         menu_id=row['permissions__menu__id']
         if not menu_id:
